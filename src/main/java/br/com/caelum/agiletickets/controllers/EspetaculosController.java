@@ -71,19 +71,22 @@ public class EspetaculosController {
 
 	@Get @Path("/sessao/{id}")
 	public void sessao(Long id) {
+		Sessao sessao = recuperaSessao(id);
+		result.include("sessao", sessao);
+	}
+
+	private Sessao recuperaSessao(Long id) {
 		Sessao sessao = agenda.sessao(id);
 		if (sessao == null) {
 			result.notFound();
 		}
-
-		result.include("sessao", sessao);
+		return sessao;
 	}
 
 	@Post @Path("/sessao/{sessaoId}/reserva")
 	public void reserva(Long sessaoId, final Integer quantidade) {
-		Sessao sessao = agenda.sessao(sessaoId);
+		Sessao sessao = recuperaSessao(sessaoId);
 		if (sessao == null) {
-			result.notFound();
 			return;
 		}
 
