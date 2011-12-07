@@ -29,7 +29,6 @@ public class EspetaculosController {
 	private Validator validator;
 	private Result result;
 
-
 	private final DiretorioDeEstabelecimentos estabelecimentos;
 
 	public EspetaculosController(Agenda agenda, DiretorioDeEstabelecimentos estabelecimentos, Validator validator, Result result) {
@@ -88,11 +87,7 @@ public class EspetaculosController {
 			return;
 		}
 
-		verificaSeQuantidadeIngressoMaiorQueUm(quantidade);
-
-		verificaSeHaIngressosDisponiveisNaSessao(quantidade, sessao);
-
-		validator.onErrorRedirectTo(this).sessao(sessao.getId());
+		validaReserva(quantidade, sessao);
 
 		sessao.reserva(quantidade);
 		
@@ -100,14 +95,20 @@ public class EspetaculosController {
 		result.redirectTo(IndexController.class).index();
 	}
 
-	private void verificaSeHaIngressosDisponiveisNaSessao(
+	private void validaReserva(final Integer quantidade, Sessao sessao) {
+		validaQuantidadeIngressoPedidos(quantidade);
+		validaSeHaIngressosDisponiveisNaSessao(quantidade, sessao);
+		validator.onErrorRedirectTo(this).sessao(sessao.getId());
+	}
+
+	private void validaSeHaIngressosDisponiveisNaSessao(
 			final Integer quantidade, Sessao sessao) {
 		if (!sessao.podeReservar(quantidade)) {
 			validator.add(new ValidationMessage("Não existem ingressos disponíveis", ""));
 		}
 	}
 
-	private void verificaSeQuantidadeIngressoMaiorQueUm(final Integer quantidade) {
+	private void validaQuantidadeIngressoPedidos(final Integer quantidade) {
 		if (quantidade < 1) {
 			validator.add(new ValidationMessage("Você deve escolher um lugar ou mais", ""));
 		}
@@ -119,7 +120,6 @@ public class EspetaculosController {
 
 		result.include("espetaculo", espetaculo);
 	}
-
 
 	@Post @Path("/espetaculo/{espetaculoId}/sessoes")
 	public void cadastraSessoes(Long espetaculoId, LocalDate inicio, LocalDate fim, LocalTime horario, Periodicidade periodicidade) {
@@ -135,11 +135,15 @@ public class EspetaculosController {
 
 	private Espetaculo carregaEspetaculo(Long espetaculoId) {
 		Espetaculo espetaculo = agenda.espetaculo(espetaculoId);
+		validaExistenciaEspetaculo(espetaculo);
+		return espetaculo;
+	}
+
+	private void validaExistenciaEspetaculo(Espetaculo espetaculo) {
 		if (espetaculo == null) {
 			validator.add(new ValidationMessage("Um espetaculo deve ser escolhido", ""));
 		}
 		validator.onErrorUse(status()).notFound();
-		return espetaculo;
 	}
 
 
