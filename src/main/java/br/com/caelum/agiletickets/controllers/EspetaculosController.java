@@ -113,7 +113,6 @@ public class EspetaculosController {
 		}
 	}
 	
-
 	@Get @Path("/espetaculo/{espetaculoId}/sessoes")
 	public void sessoes(Long espetaculoId) {
 		Espetaculo espetaculo = carregaEspetaculo(espetaculoId);
@@ -137,7 +136,7 @@ public class EspetaculosController {
 	private Espetaculo carregaEspetaculo(Long espetaculoId) {
 		Espetaculo espetaculo = agenda.espetaculo(espetaculoId);
 		if (espetaculo == null) {
-			validator.add(new ValidationMessage("", ""));
+			validator.add(new ValidationMessage("Um espetaculo deve ser escolhido", ""));
 		}
 		validator.onErrorUse(status()).notFound();
 		return espetaculo;
