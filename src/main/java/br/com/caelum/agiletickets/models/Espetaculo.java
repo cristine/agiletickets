@@ -82,11 +82,15 @@ public class Espetaculo {
 
 	public List<Sessao> criaSessoes(LocalDate inicio, LocalDate fim, LocalTime horario, Periodicidade periodicidade) {
 		List<Sessao> sessoes = new ArrayList<Sessao>();
-		
-		Sessao sessao = new Sessao();
-		sessao.setInicio(inicio.toDateTime(horario));
-		sessoes.add(sessao);
-					
+		LocalDate data = inicio;
+			
+		while (data.isBefore(fim) || data.isEqual(fim)){
+			Sessao sessaoInicio = new Sessao();
+			sessaoInicio.setInicio(data.toDateTime(horario));
+			sessoes.add(sessaoInicio);
+			data = data.plusDays(1);
+		}		
+						
 		return sessoes;
 	}
 
