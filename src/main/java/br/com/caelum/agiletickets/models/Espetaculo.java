@@ -2,6 +2,7 @@ package br.com.caelum.agiletickets.models;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -80,7 +81,13 @@ public class Espetaculo {
 	}
 
 	public List<Sessao> criaSessoes(LocalDate inicio, LocalDate fim, LocalTime horario, Periodicidade periodicidade) {
-		return null;
+		List<Sessao> sessoes = new ArrayList<Sessao>();
+		
+		Sessao sessao = new Sessao();
+		sessao.setInicio(inicio.toDateTime(horario));
+		sessoes.add(sessao);
+					
+		return sessoes;
 	}
 
 }
